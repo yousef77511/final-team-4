@@ -100,7 +100,7 @@ d:\Final team 4\
 ---
 
 ## 👥 Protons Engineering Team (Team 4)
-- **Yousef** — Lead Developer
-- **Marwa** — UI / UX Designer
-- **Moaz** — Backend Engineer
-- **Yomna** — Database Architect
+- **Yousef** — Team lead
+- **Marwa** — Team member
+- **Moaz** — Team member
+- **Yomna** — Team member
