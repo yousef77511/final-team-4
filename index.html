@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>MedBridge — Medical Supply Platform</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo" onclick="showView('home')">
+      <div class="logo-mark">
+        <span>M</span>
+      </div>
+      <div class="logo-text">
+        <strong>MedBridge</strong>
+        <small>Protons Platform</small>
+      </div>
+    </div>
+
+    <div class="sidebar-search">
+      <span class="s-icon">🔍</span>
+      <input type="text" placeholder="Search platform..." oninput="handleGlobalSearch(this.value)" autocomplete="off">
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Overview</div>
+      <button class="nav-item active" id="nav-home" onclick="showView('home')">
+        <span class="nav-icon">🏠</span> Dashboard
+      </button>
+
+      <div class="nav-section-label">Account</div>
+      <button class="nav-item" id="nav-auth" onclick="showView('auth')">
+        <span class="nav-icon">🔑</span> Login / Sign Up
+      </button>
+      <button class="nav-item" id="nav-orgdocs" onclick="showView('orgdocs')">
+        <span class="nav-icon">📄</span> Doc Verification
+      </button>
+      <button class="nav-item" id="nav-adminorgs" onclick="showView('adminorgs')">
+        <span class="nav-icon">✅</span> Org Approvals
+      </button>
+
+      <div class="nav-section-label">Donor</div>
+      <button class="nav-item" id="nav-additem" onclick="showView('additem')">
+        <span class="nav-icon">➕</span> Post Donation
+      </button>
+      <button class="nav-item" id="nav-mydonations" onclick="showView('mydonations')">
+        <span class="nav-icon">📦</span> My Donations
+      </button>
+      <button class="nav-item" id="nav-edititem" onclick="showView('edititem')">
+        <span class="nav-icon">✏️</span> Edit Items
+      </button>
+
+      <div class="nav-section-label">Community</div>
+      <button class="nav-item" id="nav-browse" onclick="showView('browse')">
+        <span class="nav-icon">🔍</span> Browse Supplies
+      </button>
+      <button class="nav-item" id="nav-wishlist" onclick="showView('wishlist')">
+        <span class="nav-icon">🚑</span> Hospital Requests
+      </button>
+
+      <div class="nav-section-label">Management</div>
+      <button class="nav-item" id="nav-pendingreview" onclick="showView('pendingreview')">
+        <span class="nav-icon">🛡️</span> Safety Review
+      </button>
+      <button class="nav-item" id="nav-managelive" onclick="showView('managelive')">
+        <span class="nav-icon">🟢</span> Live Inventory
+      </button>
+      <button class="nav-item" id="nav-activitylog" onclick="showView('activitylog')">
+        <span class="nav-icon">📋</span> Audit Log
+      </button>
+
+      <div class="nav-section-label">System</div>
+      <button class="nav-item" id="nav-chat" onclick="showView('chat')">
+        <span class="nav-icon">💬</span> Messages
+      </button>
+      <button class="nav-item" id="nav-delivery" onclick="showView('delivery')">
+        <span class="nav-icon">🔐</span> Delivery Code
+      </button>
+      <button class="nav-item" id="nav-impact" onclick="showView('impact')">
+        <span class="nav-icon">📊</span> Impact & Tax
+      </button>
+      <button class="nav-item" id="nav-about" onclick="showView('about')">
+        <span class="nav-icon">👥</span> Our Team
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-chip" onclick="showView('auth')">
+        <div class="user-avatar" id="user-display-avatar">Y</div>
+        <div class="user-info">
+          <span class="user-name" id="user-display-name">Yousef Protons</span>
+          <span class="user-email" id="user-display-email">team4@protons.edu.com</span>
+        </div>
+      </div>
+      <div class="sidebar-footer-actions">
+        <button class="footer-btn" onclick="toggleTheme()" title="Toggle Theme">🌓</button>
+        <button class="footer-btn" onclick="handleLogout()" title="Log out">🚪</button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-layout">
+    <header class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()" title="Menu">☰</button>
+      <div class="topbar-title">
+        <h2 id="page-title">Dashboard</h2>
+      </div>
+      <div class="topbar-status" id="backend-status-indicator" onclick="checkBackendHealth()">
+        <span class="status-dot offline" id="api-status-dot"></span>
+        <span class="status-text" id="api-status-text">Checking API...</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn theme-toggle-top" onclick="toggleTheme()" title="Toggle dark/light mode">🌓</button>
+        <div style="position:relative">
+          <button class="icon-btn" onclick="toggleDropdown('notif-drop')" title="Notifications">
+            🔔<span class="badge-dot"></span>
+          </button>
+          <div id="notif-drop" class="dropdown-panel">
+            <div class="drop-head">
+              <strong>Notifications</strong>
+              <span class="drop-badge">2 new</span>
+            </div>
+            <div class="drop-item" onclick="showView('chat');closeDropdowns()">
+              <span class="drop-icon">💬</span>
+              <div>
+                <div class="drop-title">New message from Hope Medical</div>
+                <div class="drop-time">Just now</div>
+              </div>
+            </div>
+            <div class="drop-item" onclick="showView('mydonations');closeDropdowns()">
+              <span class="drop-icon">📦</span>
+              <div>
+                <div class="drop-title">Surgical Gloves approved</div>
+                <div class="drop-time">10 min ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="position:relative">
+          <button class="avatar-btn" id="topbar-avatar-btn" onclick="toggleDropdown('user-drop')">Y</button>
+          <div id="user-drop" class="dropdown-panel">
+            <div class="drop-head">
+              <strong id="dropdown-user-name">Protons Member</strong>
+              <small id="dropdown-user-email">team4@protons.edu.com</small>
+            </div>
+            <button class="drop-item" onclick="showView('mydonations');closeDropdowns()">
+              <span class="drop-icon">📦</span><div><div class="drop-title">My Donations</div></div>
+            </button>
+            <button class="drop-item" onclick="showView('wishlist');closeDropdowns()">
+              <span class="drop-icon">🚑</span><div><div class="drop-title">Hospital Wishlist</div></div>
+            </button>
+            <button class="drop-item" onclick="showView('about');closeDropdowns()">
+              <span class="drop-icon">ℹ️</span><div><div class="drop-title">About Team</div></div>
+            </button>
+            <div class="drop-divider"></div>
+            <button class="drop-item drop-logout" onclick="handleLogout();closeDropdowns()">
+              <span class="drop-icon">🚪</span><div><div class="drop-title">Log Out</div></div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <section id="view-home" class="view-panel active">
+        <div class="welcome-banner">
+          <div class="welcome-text">
+            <h2>Welcome, Yousef</h2>
+            <p>MedBridge connects verified donors and medical institutions to redistribute essential supplies safely and transparently.</p>
+          </div>
+          <div class="welcome-actions">
+            <button class="btn btn-primary" onclick="showView('additem')">+ Post Donation</button>
+            <button class="btn btn-secondary" onclick="showView('browse')">Browse Catalog</button>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-icon">📦</div>
+            <div class="stat-body">
+              <div class="stat-value" id="home-stat-total">1,240+</div>
+              <div class="stat-label">Items Redistributed</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🏥</div>
+            <div class="stat-body">
+              <div class="stat-value" id="home-stat-orgs">84</div>
+              <div class="stat-label">Verified Organizations</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">♻️</div>
+            <div class="stat-body">
+              <div class="stat-value">12.5 T</div>
+              <div class="stat-label">Medical Waste Saved</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⚖️</div>
+            <div class="stat-body">
+              <div class="stat-value">100%</div>
+              <div class="stat-label">Safety Audited</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <h3>Recent Postings</h3>
+          <button class="link-btn" onclick="showView('browse')">View all →</button>
+        </div>
+        <div class="grid-auto" id="home-recent-grid"></div>
+
+        <div class="quick-actions">
+          <h3>Quick Operations</h3>
+          <div class="qa-grid">
+            <button class="qa-card" onclick="showView('additem')">
+              <span class="qa-icon">➕</span>
+              <span class="qa-label">Post Donation</span>
+            </button>
+            <button class="qa-card" onclick="showView('browse')">
+              <span class="qa-icon">🔍</span>
+              <span class="qa-label">Browse Supplies</span>
+            </button>
+            <button class="qa-card" onclick="showView('wishlist')">
+              <span class="qa-icon">🚑</span>
+              <span class="qa-label">Hospital Requests</span>
+            </button>
+            <button class="qa-card" onclick="showView('chat')">
+              <span class="qa-icon">💬</span>
+              <span class="qa-label">Messages</span>
+            </button>
+            <button class="qa-card" onclick="showView('pendingreview')">
+              <span class="qa-icon">🛡️</span>
+              <span class="qa-label">Safety Queue</span>
+            </button>
+            <button class="qa-card" onclick="showView('impact')">
+              <span class="qa-icon">📊</span>
+              <span class="qa-label">Impact Report</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-auth" class="view-panel">
+        <div class="centered-form">
+          <div class="form-hero">
+            <div class="logo-mark large">M</div>
+            <h2>Account Portal</h2>
+            <p>Access donor features or manage your verified healthcare organization profile.</p>
+          </div>
+          <div class="card">
+            <div class="tabs">
+              <button class="tab-btn active" onclick="switchTab('auth','login',this)">Sign In</button>
+              <button class="tab-btn" onclick="switchTab('auth','donor',this)">Donor Account</button>
+              <button class="tab-btn" onclick="switchTab('auth','org',this)">Organization</button>
+            </div>
+            <div id="auth-login" class="tab-pane active">
+              <div class="field">
+                <label>Email Address</label>
+                <input type="email" id="login-email" placeholder="you@example.com" value="team4@protons.edu.com">
+              </div>
+              <div class="field">
+                <label>Password</label>
+                <input type="password" id="login-password" placeholder="Enter password" value="123456789">
+              </div>
+              <button class="btn btn-primary full-w" onclick="handleLogin()">Sign In</button>
+              <p class="form-hint">New here? Select <strong>Donor Account</strong> above to register.</p>
+            </div>
+            <div id="auth-donor" class="tab-pane">
+              <div class="field">
+                <label>Full Name</label>
+                <input type="text" id="donor-reg-name" placeholder="e.g. Yousef Ahmed">
+              </div>
+              <div class="field">
+                <label>Email Address</label>
+                <input type="email" id="donor-reg-email" placeholder="donor@example.com">
+              </div>
+              <div class="field">
+                <label>Password</label>
+                <input type="password" id="donor-reg-password" placeholder="Create password">
+              </div>
+              <button class="btn btn-primary full-w" onclick="handleDonorRegister()">Create Account</button>
+            </div>
+            <div id="auth-org" class="tab-pane">
+              <div class="info-box">
+                <span>ℹ️</span>
+                <p>Healthcare organization registrations are verified against national registry records before approval.</p>
+              </div>
+              <div class="field">
+                <label>Organization Name</label>
+                <input type="text" id="org-reg-name" placeholder="City General Hospital">
+              </div>
+              <div class="grid-2">
+                <div class="field">
+                  <label>Facility Type</label>
+                  <select id="org-reg-type">
+                    <option value="hospital">Hospital</option>
+                    <option value="ngo">NGO / Relief Organization</option>
+                    <option value="orphanage">Orphanage</option>
+                    <option value="elderly_home">Elderly Home</option>
+                    <option value="pharmacy">Community Pharmacy</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>License Number</label>
+                  <input type="text" id="org-reg-license" placeholder="LIC-EGY-2026-888">
+                </div>
+              </div>
+              <div class="grid-2">
+                <div class="field">
+                  <label>Phone Number</label>
+                  <input type="text" id="org-reg-phone" placeholder="+20223456789">
+                </div>
+                <div class="field">
+                  <label>Official Address</label>
+                  <input type="text" id="org-reg-address" placeholder="Cairo Medical Center">
+                </div>
+              </div>
+              <div class="field">
+                <label>Official Contact Email</label>
+                <input type="email" id="org-reg-email" placeholder="contact@hospital.org">
+              </div>
+              <button class="btn btn-primary full-w" onclick="handleOrgRegister()">Register Organization</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-orgdocs" class="view-panel">
+        <div class="centered-form">
+          <div class="step-intro">
+            <span class="step-badge">Verification</span>
+            <h2>Upload Verification Documents</h2>
+            <p>Upload official documentation to confirm hospital or NGO accreditation.</p>
+          </div>
+          <div class="card">
+            <div class="field">
+              <label>Healthcare Operating License</label>
+              <div class="upload-box" onclick="document.getElementById('file-license').click()">
+                <span class="upload-icon">📄</span>
+                <span id="label-license">Select License File</span>
+                <small>PDF, PNG or JPG · Up to 10MB</small>
+                <input type="file" id="file-license" style="display:none" onchange="handleFileSelect('file-license', 'label-license')">
+              </div>
+            </div>
+            <div class="field">
+              <label>Tax Registration Certificate</label>
+              <div class="upload-box" onclick="document.getElementById('file-tax').click()">
+                <span class="upload-icon">📑</span>
+                <span id="label-tax">Select Tax Certificate</span>
+                <small>PDF, PNG or JPG · Up to 10MB</small>
+                <input type="file" id="file-tax" style="display:none" onchange="handleFileSelect('file-tax', 'label-tax')">
+              </div>
+            </div>
+            <div class="info-box">
+              <span>ℹ️</span>
+              <p>Submissions are audited by our compliance officers within 24 business hours.</p>
+            </div>
+            <button class="btn btn-primary full-w" onclick="submitVerificationDocs()">Submit for Review</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-adminorgs" class="view-panel">
+        <div class="section-header">
+          <h3>Organization Approval Queue</h3>
+          <span class="count-badge" id="org-count-badge"></span>
+        </div>
+        <div id="admin-orgs-list"></div>
+      </section>
+
+      <section id="view-additem" class="view-panel">
+        <div class="centered-form">
+          <div class="wizard-header">
+            <h2>Post a Donation</h2>
+            <p>List surplus medications, PPE, or equipment for redistribution.</p>
+          </div>
+          <div class="card">
+            <div class="wizard-steps">
+              <div class="wstep active" id="sdot-1">
+                <div class="wstep-circle">1</div>
+                <div class="wstep-label">Basic</div>
+              </div>
+              <div class="wstep-line"></div>
+              <div class="wstep" id="sdot-2">
+                <div class="wstep-circle">2</div>
+                <div class="wstep-label">Details</div>
+              </div>
+              <div class="wstep-line"></div>
+              <div class="wstep" id="sdot-3">
+                <div class="wstep-circle">3</div>
+                <div class="wstep-label">Confirm</div>
+              </div>
+            </div>
+
+            <div id="spane-1" class="step-pane active">
+              <div class="field">
+                <label>Item Name <span class="required">*</span></label>
+                <input type="text" id="ai-name" placeholder="e.g. Sterile Surgical Gloves Box">
+              </div>
+              <div class="field">
+                <label>Category <span class="required">*</span></label>
+                <select id="ai-cat">
+                  <option value="PPE">PPE & Protection</option>
+                  <option value="Equipment">Medical Equipment</option>
+                  <option value="Medicine">Pharmaceuticals</option>
+                  <option value="Consumables">Consumable Supplies</option>
+                </select>
+              </div>
+              <button class="btn btn-primary full-w" onclick="navWizard(2)">Next Step →</button>
+            </div>
+
+            <div id="spane-2" class="step-pane">
+              <div class="grid-2">
+                <div class="field">
+                  <label>Expiry Date</label>
+                  <input type="date" id="ai-exp">
+                </div>
+                <div class="field">
+                  <label>Batch / Lot Number</label>
+                  <input type="text" id="ai-batch" placeholder="e.g. LOT-44120">
+                </div>
+              </div>
+              <div class="btn-row">
+                <button class="btn btn-ghost" onclick="navWizard(1)">← Back</button>
+                <button class="btn btn-primary" onclick="navWizard(3)">Review →</button>
+              </div>
+            </div>
+
+            <div id="spane-3" class="step-pane">
+              <h4 style="margin:0 0 12px">Summary</h4>
+              <div id="wizard-summary" class="summary-box"></div>
+              <div class="btn-row">
+                <button class="btn btn-ghost" onclick="navWizard(2)">← Edit</button>
+                <button class="btn btn-success" onclick="submitDonation()">Submit Listing</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-mydonations" class="view-panel">
+        <div class="section-header">
+          <h3>My Donation Submissions</h3>
+          <button class="btn btn-primary btn-sm" onclick="showView('additem')">+ New Item</button>
+        </div>
+        <div id="my-donations-list"></div>
+      </section>
+
+      <section id="view-edititem" class="view-panel">
+        <div class="centered-form wide">
+          <div class="section-header">
+            <h3>Manage Existing Listings</h3>
+          </div>
+          <div class="card">
+            <div class="field">
+              <label>Select an item to edit or remove</label>
+              <select id="edit-item-select" onchange="loadEditForm()"></select>
+            </div>
+            <div id="edit-form-container"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-browse" class="view-panel">
+        <div class="browse-filters card">
+          <div class="grid-2">
+            <div class="field" style="margin:0">
+              <label>Search Inventory</label>
+              <div class="input-with-icon">
+                <span>🔍</span>
+                <input type="text" id="browse-search" placeholder="Search by name, category, batch..." oninput="renderBrowseGrid()">
+              </div>
+            </div>
+            <div class="field" style="margin:0">
+              <label>Category Filter</label>
+              <select id="browse-cat" onchange="renderBrowseGrid()">
+                <option value="">All Categories</option>
+                <option value="PPE">PPE & Protection</option>
+                <option value="Equipment">Medical Equipment</option>
+                <option value="Medicine">Pharmaceuticals</option>
+                <option value="Consumables">Consumable Supplies</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="grid-auto" id="browse-grid"></div>
+      </section>
+
+      <section id="view-wishlist" class="view-panel">
+        <div class="grid-2-layout">
+          <div>
+            <div class="section-header"><h3>Post Hospital Need</h3></div>
+            <div class="card">
+              <div class="info-box">
+                <span>ℹ️</span>
+                <p>Post critical resource deficits. Registered donors and organizations will be notified.</p>
+              </div>
+              <div class="field">
+                <label>Facility Name <span class="required">*</span></label>
+                <input type="text" id="wl-hosp" placeholder="e.g. Hope Health Center">
+              </div>
+              <div class="field">
+                <label>Required Supplies <span class="required">*</span></label>
+                <input type="text" id="wl-item" placeholder="e.g. Sterile Syringes 5ml">
+              </div>
+              <div class="grid-2">
+                <div class="field">
+                  <label>Quantity <span class="required">*</span></label>
+                  <input type="number" id="wl-qty" placeholder="100" min="1">
+                </div>
+                <div class="field">
+                  <label>Urgency Level</label>
+                  <select id="wl-urg">
+                    <option value="High">High Urgency</option>
+                    <option value="Medium">Medium Urgency</option>
+                    <option value="Low">Low Urgency</option>
+                  </select>
+                </div>
+              </div>
+              <button class="btn btn-primary full-w" onclick="addWishlistItem()">Publish Request</button>
+            </div>
+          </div>
+          <div>
+            <div class="section-header">
+              <h3>Active Facility Requests</h3>
+            </div>
+            <div id="wishlist-items-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-pendingreview" class="view-panel">
+        <div class="section-header">
+          <h3>Safety Review Queue</h3>
+          <span class="tag">Compliance Audit</span>
+        </div>
+        <div class="info-box card-style">
+          <span>ℹ️</span>
+          <p>Inspect donated lots for seal integrity, valid expiration, and regulatory compliance before publishing to live catalog.</p>
+        </div>
+        <div id="pending-items-list"></div>
+      </section>
+
+      <section id="view-managelive" class="view-panel">
+        <div class="section-header">
+          <h3>Live Catalog Inventory</h3>
+          <span class="tag tag-success">Active Listings</span>
+        </div>
+        <div id="live-items-list"></div>
+      </section>
+
+      <section id="view-activitylog" class="view-panel">
+        <div class="section-header">
+          <h3>Audit Trail</h3>
+          <span class="tag">Immutable Log</span>
+        </div>
+        <div class="card table-card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Actor</th>
+                  <th>Action</th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+              <tbody id="audit-log-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-chat" class="view-panel">
+        <div class="chat-layout">
+          <div class="chat-sidebar" id="chat-threads"></div>
+          <div class="chat-main">
+            <div class="chat-messages" id="chat-messages-container"></div>
+            <div class="chat-input-bar">
+              <input type="text" id="chat-input" placeholder="Type message..." autocomplete="off">
+              <button class="btn btn-primary" onclick="sendChatMessage()">Send</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-delivery" class="view-panel">
+        <div class="centered-form narrow">
+          <div class="section-header center">
+            <h3>Handover Verification</h3>
+            <p>Show this verification code to the facility recipient upon delivery.</p>
+          </div>
+          <div class="card delivery-card">
+            <div class="qr-container" id="qr-matrix"></div>
+            <div class="delivery-pin" id="delivery-pin">------</div>
+            <p class="delivery-hint">Secure 6-digit confirmation code</p>
+            <button class="btn btn-primary full-w" onclick="regenerateDeliveryCode()">Generate New Code</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-impact" class="view-panel">
+        <div class="section-header">
+          <h3>Community Impact</h3>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-icon">📦</div>
+            <div class="stat-body">
+              <div class="stat-value" id="st-total">0</div>
+              <div class="stat-label">Total Donations</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-body">
+              <div class="stat-value" id="st-delivered">0</div>
+              <div class="stat-label">Delivered</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🏥</div>
+            <div class="stat-body">
+              <div class="stat-value" id="st-orgs">3</div>
+              <div class="stat-label">Partner Institutions</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">❤️</div>
+            <div class="stat-body">
+              <div class="stat-value" id="st-impact">1,500+</div>
+              <div class="stat-label">Lives Reached</div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:20px">
+          <div class="feature-row">
+            <div class="feature-icon">🧾</div>
+            <div>
+              <h4 style="margin:0 0 4px">Official Donation Impact Receipt</h4>
+              <p style="margin:0;color:var(--muted);font-size:13px">Generate an accredited PDF/print record of items transferred for institutional and compliance reporting.</p>
+            </div>
+            <button class="btn btn-primary" onclick="printTaxReceipt()">Print Receipt</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-about" class="view-panel">
+        <div class="about-hero card">
+          <div class="about-logo">
+            <div class="logo-mark large">M</div>
+          </div>
+          <h2>About MedBridge</h2>
+          <p>MedBridge is designed by the Protons Team (Team 4) to bridge the gap between surplus healthcare resources and underserved medical facilities, establishing a transparent, audited redistribution platform.</p>
+        </div>
+        <div class="section-header" style="margin-top:28px"><h3>Protons Engineering Team</h3></div>
+        <div class="team-grid">
+          <div class="team-card">
+            <div class="team-avatar">Y</div>
+            <h4>Yousef</h4>
+            <span class="team-role">Lead Developer</span>
+          </div>
+          <div class="team-card">
+            <div class="team-avatar">M</div>
+            <h4>Marwa</h4>
+            <span class="team-role">UI / UX Designer</span>
+          </div>
+          <div class="team-card">
+            <div class="team-avatar">M</div>
+            <h4>Moaz</h4>
+            <span class="team-role">Backend Engineer</span>
+          </div>
+          <div class="team-card">
+            <div class="team-avatar">Y</div>
+            <h4>Yomna</h4>
+            <span class="team-role">Database Architect</span>
+          </div>
+        </div>
+        <div class="card" style="margin-top:20px">
+          <div class="footer-links-row">
+            <span>© 2026 MedBridge · Protons Team 4</span>
+            <div style="display:flex;gap:12px">
+              <a href="#" class="social-btn" title="Home">🌐</a>
+              <a href="mailto:team4@protons.edu.com" class="social-btn" title="Contact">✉️</a>
+              <a href="tel:+201234567890" class="social-btn" title="Phone">📱</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <button class="bnav-item active" onclick="showView('home')">
+    <span>🏠</span><span>Home</span>
+  </button>
+  <button class="bnav-item" onclick="showView('browse')">
+    <span>🔍</span><span>Browse</span>
+  </button>
+  <button class="bnav-item bnav-fab" onclick="showView('additem')">
+    <span>➕</span>
+  </button>
+  <button class="bnav-item" onclick="showView('chat')">
+    <span>💬</span><span>Chat</span>
+  </button>
+  <button class="bnav-item" onclick="showView('impact')">
+    <span>📊</span><span>Impact</span>
+  </button>
+</nav>
+
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+<div class="toast-container" id="toast-box"></div>
+
+<script src="index.js"></script>
+</body>
+</html>
